@@ -1,0 +1,38 @@
+I420 - 先是Y数据，然后是U数据，最后是V数据。
+
+
+
+sudo apt-get update
+sudo apt-get install vlc
+sudo raspivid -o - -t 0 -w 640 -h 360 -fps 25|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+
+x264 -o out_x264.h264 --input-res 176x144 out.yuv 
+
+
+x264 -o - --input-res 176x144 out.yuv | vlc -vvv - --demux=h264
+
+
+H264 裸流
+C:\Program Files (x86)\VideoLAN\VLC>vlc udp://@:8080 --demux=h264
+
+
+./a.out 176x144 <out.yuv | vlc - --demux=h264
+
+./a.out 176x144 <out.yuv | vlc -vvv - --demux=h264
+
+vlc -I dummy
+cvlc
+
+
+vlc ** vlc://quit                          // 播放完自动退出
+
+
+--loop 循环播放
+
+
+vlc -vvv mp4-12C_高清.mp4 --sout '#transcode{vcodec=mp4v,acodec=mpga,vb=800,ab=128}:standard{access=http,mux=ogg,dst=:8080}'
+
+
+vlc --width=176 --height=144 --rawvid-fps=10 out.yuv
+vlc --rawvid-fps=10 --rawvid-width=176 --rawvid-height=144 --rawvid-chroma=I420 out.yuv
+
