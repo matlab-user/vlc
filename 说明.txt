@@ -1,4 +1,6 @@
 I420 - 先是Y数据，然后是U数据，最后是V数据。
+       长、宽必须是8的倍数。
+       安行顺序排列。
 
 
 
@@ -12,6 +14,8 @@ x264 -o out_x264.h264 --input-res 176x144 out.yuv
 x264 -o - --input-res 176x144 out.yuv | vlc -vvv - --demux=h264
 
 
+x264 -o akiyo_qcif_y4m.h264 akiyo_qcif.y4m 
+
 H264 裸流
 C:\Program Files (x86)\VideoLAN\VLC>vlc udp://@:8080 --demux=h264
 
@@ -22,6 +26,9 @@ C:\Program Files (x86)\VideoLAN\VLC>vlc udp://@:8080 --demux=h264
 
 vlc -I dummy
 cvlc
+
+// 转码为mp4
+vlc akiyo_qcif.h264 --sout '#transcode{vcodec=mp4v,acodec=mpga,vb=800,ab=128}:file{dst=akiyo_qcif.mp4}'
 
 
 vlc ** vlc://quit                          // 播放完自动退出
@@ -36,3 +43,30 @@ vlc -vvv mp4-12C_高清.mp4 --sout '#transcode{vcodec=mp4v,acodec=mpga,vb=800,ab=1
 vlc --width=176 --height=144 --rawvid-fps=10 out.yuv
 vlc --rawvid-fps=10 --rawvid-width=176 --rawvid-height=144 --rawvid-chroma=I420 out.yuv
 
+// 网络上的一个例子
+cvlc -I dummy 000.ts :sout='#standard{access=file,mux=mp4,dst=./1.mp4,caching=2000}'
+
+vlc RTSP 通信例子（vlc客户端发送）
+
+OPTIONS rtsp://127.0.0.1:8090 RTSP/1.0
+CSeq: 2
+User-Agent: LibVLC/2.1.6 (LIVE555 Streaming Media v2014.01.13)
+
+
+OPTIONS rtsp://127.0.0.1:8090 RTSP/1.0
+CSeq: 1
+User-Agent: RealMedia Player Version 6.0.9.1235 (linux-2.0-libc6-i386-gcc2.95)
+ClientChallenge: 9e26d33f2984236010ef6253fb1887f7
+PlayerStarttime: [28/03/2003:22:50:23 00:00]
+CompanyID: KnKV4M4I/B2FjJ1TToLycw==
+GUID: 00000000-0000-0000-0000-000000000000
+RegionData: 0
+ClientID: Linux_2.4_6.0.9.1235_play32_RN01_EN_586
+
+
+http 协议相关
+Content-Range = “Content-Range” “:” content-range-spec
+content-range-spec = byte-content-range-spec
+byte-content-range-spec = bytes-unit SP byte-range-resp-spec “/” ( instance-length | “*” )
+byte-range-resp-spec = (first-byte-pos “-” last-byte-pos) | “*”
+instance-length = 1*DIGIT
