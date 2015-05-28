@@ -43,5 +43,6 @@ Temporary Items
 .apdisk
 
 *.mp4
-1.y4m
+*.y4m
 *.yuv
+*.h264

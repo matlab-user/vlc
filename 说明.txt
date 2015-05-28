@@ -43,6 +43,9 @@ vlc -vvv mp4-12C_高清.mp4 --sout '#transcode{vcodec=mp4v,acodec=mpga,vb=800,ab=1
 vlc --width=176 --height=144 --rawvid-fps=10 out.yuv
 vlc --rawvid-fps=10 --rawvid-width=176 --rawvid-height=144 --rawvid-chroma=I420 out.yuv
 
+vlc out.yuv --rawvid-width=176 --rawvid-height=144 --rawvid-chroma=I420 --sout '#transcode{vcodec=mp4v,acodec=mpga,vb=800,ab=128,deinterlace}:file{dst=out.mp4}'
+
+
 // 网络上的一个例子
 cvlc -I dummy 000.ts :sout='#standard{access=file,mux=mp4,dst=./1.mp4,caching=2000}'
 
@@ -70,3 +73,10 @@ content-range-spec = byte-content-range-spec
 byte-content-range-spec = bytes-unit SP byte-range-resp-spec “/” ( instance-length | “*” )
 byte-range-resp-spec = (first-byte-pos “-” last-byte-pos) | “*”
 instance-length = 1*DIGIT
+
+
+
+
+
+
+php send_yuv.php |x264 -o - --input-res 176x144 - | vlc -vvv - --demux=h264
