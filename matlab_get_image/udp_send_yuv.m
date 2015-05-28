@@ -1,6 +1,6 @@
 function udp_send_yuv
     
-    fid = fopen( 'out.h264', 'r' );
+    fid = fopen( 'out.yuv', 'r' );
     
     u = udp( '192.168.2.101', 8090, 'OutputBufferSize', 1500 );
     
@@ -13,7 +13,8 @@ function udp_send_yuv
         has_send = has_send + size(A,2)
         
         fwrite( u, A );
-        %pause(1);
+        %pause(0.1);
+        break;
     end
     
     fclose( fid );
