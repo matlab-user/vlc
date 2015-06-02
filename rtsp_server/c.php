@@ -3,18 +3,54 @@
 	set_time_limit(0); 
 	ob_implicit_flush();
 	
+	pcntl_signal( SIGCHLD, SIG_IGN );
+	
 	$id = 'wdn-1';
 	
 	$s_ip = '127.0.0.1';		// 服务器ip
 	$s_port = 8090;				// 服务端口
 	
+	$shm_key = ftok( __FILE__, 'w' );
+	$shm_id = shmop_open( $shm_key, 'c', 0644, 1 );
+	if( $shm_id==FALSE )
+		die( "shmop_open failed\r\n" );
+	
+//------------------------------------------------	
 	$l_ip = '';
 	$l_port = 0;
 	
-	while( 1 ) {
-		say_hi( $s_ip, $s_port, $l_ip, $l_port );
-		break;
-		sleep( 10 );
+	$pid = pcntl_fork();
+	if( $pid==-1 ) {
+		 die('could not fork');
+	} elseif( $pid ) {
+		$i = 0;
+		while( 1 ) {
+			//say_hi( $s_ip, $s_port, $l_ip, $l_port );
+			if( $i%2==0 )
+				$str = 'x';
+			else
+				$str = 'w';
+			
+			shmop_write( $shm_id, $str, 0 );
+			sleep( 4 );
+			$i++;
+			if( $i>20 ) {
+				shmop_write( $shm_id, 'q', 0 );
+				break;
+			}
+		}
+		
+		shmop_delete( $shm_id );
+		shmop_close( $shm_id );
+	} else {
+		//子进程执行逻辑。
+		while( 1 ) {
+			$shm_data = shmop_read( $shm_id, 0 , 1 );
+			echo "C---$shm_data\r\n";
+			sleep( 5 );
+			if( $shm_data==='q' )
+				break;
+		}
 	}
 	
 

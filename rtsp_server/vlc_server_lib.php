@@ -53,4 +53,39 @@
 				unset( $dev_info_array[$k] );
 		}
 	}
+	
+	// 获取空闲的 udp 端口
+	// 需要以 root 权限运行
+	function get_valid_udp_port() {
+		$delim = ' ';
+		$out_res = array();
+		
+		for( $i=0; $i<10; $i++ ) {
+			$port = mt_rand( 1024, pow(2,16)-1 );
+			exec( "netstat -ua | grep $port", $out_res );
+			
+			if( count($out_res)==0 )
+				return $port;
+			
+			$sig = 0;
+			foreach( $out_res as $v ) {
+				strtok( $v, $delim );
+				strtok( $delim );
+				strtok( $delim );
+				$s1 = strtok( $delim );
+
+				$out_res_2 = array();
+				exec( "echo $s1 | grep -w $port", $out_res_2 );
+				if( count($out_res_2)!=0 ) {
+					$sig = 1;
+					break;
+				}
+			}
+			
+			if( $sig==0 )
+				return $port;
+		}
+		
+		return -1;
+	}
 ?>

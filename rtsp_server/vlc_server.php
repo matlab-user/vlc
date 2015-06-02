@@ -1,4 +1,5 @@
 <?php
+	// 需要以 root 权限运行
 	
 	require_once( 'vlc_server_lib.php' );
 	
@@ -54,6 +55,7 @@ START:
 							break;
 						
 						case 'ON':
+/*
 							$id = get_id( $buf );
 							if( empty($id) || !isset($dev_info_array[$id]) )
 								break;
@@ -66,6 +68,10 @@ START:
 								
 							$msg = 'ON';
 							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
+*/							
+							$msg = 'wang-dehui';
+							$len = strlen( $msg );
+							socket_sendto( $socket, $msg, $len, 0, $f_ip, $f_port );
 							break;
 							
 						default:
@@ -74,9 +80,9 @@ START:
 					
 				}
 		}
-		echo "wwwwww\r\n";
+//		echo "wwwwww\r\n";
 		clean_dev_info( 60*5 );
-		var_dump( $dev_info_array );
+//		var_dump( $dev_info_array );
 	}
 	
 	socket_close( $socket );
