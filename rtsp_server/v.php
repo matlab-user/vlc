@@ -8,13 +8,21 @@
 	//$address = '127.0.0.1';
 	$port = 8090;
 	
+	$l_ip = '';
+	$l_port = '';
+	
 	$sock = init_socket();
 	say_ON( $sock, $address, $port );
-	
-	$buf = '';
-	socket_recvfrom( $sock, $buf, 1024, 0, $address, $port );
-	echo "======$buf\r\n";
+	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
+	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 	socket_close( $sock );
+	
+	exec( "vlc --quiet -vvv rtp://@:$l_port" );
+	
+	//$buf = '';
+	//socket_recvfrom( $sock, $buf, 1024, 0, $address, $port );
+	//echo "======$buf\r\n";
+
 //-------------------------------------------------------------------------------
 // 								funs
 //-------------------------------------------------------------------------------
@@ -47,9 +55,6 @@ function say_ON( $sock, $address, $port ) {
 	$msg = "ON$id;";
 	$len = strlen( $msg );
 	socket_sendto( $sock, $msg, $len, 0, $address, $port );
-	
-	//socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
-	//echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 } 
 
 function start_udp_server( $port ) { 

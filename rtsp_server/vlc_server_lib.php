@@ -4,7 +4,10 @@
 		public $ip = '';			// 设备控制地址, 默认为 UDP  
 		public $port = 0;			// 设备控制端口
 		public $at = 0;				// 最后一次收到信息的时间，UTC时间
-		public $addr = ‘’;			// 开启的服务地址
+		public $addr = '';			// 开启的服务地址
+		public $if_open = 0;		// 是否已经开始传输数据
+		public $v_ip = '';			// viewer 的 ip 和 port		
+		public $v_port = 0;
 	}
 
 
@@ -88,4 +91,18 @@
 		
 		return -1;
 	}
+	
+	// 根据源 ip、port，获得 viewer ip port
+	function get_view_addr( $ip, $port, &$v_ip, &$v_port ) {
+		global $dev_info_array;
+		
+		foreach( $dev_info_array as $k => $v ) {
+			if( $v->ip==$ip && $v->port==$port ) {
+				$v_ip = $v->v_ip;
+				$v_port = $v->v_port;
+				break;
+			}
+		}
+	} 
+	
 ?>

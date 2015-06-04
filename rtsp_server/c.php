@@ -25,7 +25,7 @@
 	} elseif( $pid ) {
 		$i = 0;
 		while( 1 ) {
-			//say_hi( $s_ip, $s_port, $l_ip, $l_port );
+			say_hi( $s_ip, $s_port, $l_ip, $l_port );
 			if( $i%2==0 )
 				$str = 'x';
 			else
