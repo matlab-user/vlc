@@ -5,7 +5,7 @@
 	
 	pcntl_signal( SIGCHLD, SIG_IGN );
 	
-	$id = 'wdn-1';
+	$id = 'wdh_1';
 	
 	$s_ip = '127.0.0.1';		// 服务器ip
 	$s_port = 8090;				// 服务端口
@@ -26,13 +26,15 @@
 		$i = 0;
 		while( 1 ) {
 			say_hi( $s_ip, $s_port, $l_ip, $l_port );
+/*
 			if( $i%2==0 )
 				$str = 'x';
 			else
 				$str = 'w';
 			
 			shmop_write( $shm_id, $str, 0 );
-			sleep( 4 );
+*/
+			sleep( 15 );
 			$i++;
 			if( $i>20 ) {
 				shmop_write( $shm_id, 'q', 0 );
@@ -46,7 +48,7 @@
 		//子进程执行逻辑。
 		while( 1 ) {
 			$shm_data = shmop_read( $shm_id, 0 , 1 );
-			echo "C---$shm_data\r\n";
+//			echo "C---$shm_data\r\n";
 			sleep( 5 );
 			if( $shm_data==='q' )
 				break;
@@ -79,7 +81,7 @@ function say_hi( $address, $port, &$l_ip, &$l_port ) {
 	socket_sendto( $sock, $msg, $len, 0, $address, $port );
 	
 	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
-	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
+//	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 	
 	socket_close( $sock );	
 	

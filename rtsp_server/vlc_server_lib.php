@@ -4,8 +4,7 @@
 		public $ip = '';			// 设备控制地址, 默认为 UDP  
 		public $port = 0;			// 设备控制端口
 		public $at = 0;				// 最后一次收到信息的时间，UTC时间
-		public $addr = '';			// 开启的服务地址
-		public $if_open = 0;		// 是否已经开始传输数据
+		public $server_id = '';			// 开启的服务 ID
 		public $v_ip = '';			// viewer 的 ip 和 port		
 		public $v_port = 0;
 	}
@@ -16,7 +15,7 @@
 		$socket = socket_create( AF_INET, SOCK_DGRAM, SOL_UDP );
 		if( $socket===false ) {
 			echo "socket_create() failed:reason:" . socket_strerror( socket_last_error() ) . "\n";
-			exit;
+			return FALSE;
 		}
 			
 		socket_set_option( $socket, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>6, "usec"=>0 ) );
@@ -25,14 +24,13 @@
 		if( $ok===false ) {
 			echo "false  \r\n";
 			echo "socket_bind() failed:reason:" . socket_strerror( socket_last_error( $socket ) )."\r\n";
-			exit;
+			return FALSE;
 		}
-
-		echo "The udp server is running!\n";
+		
 		return $socket;
 	}
 	
-	function get_id( $recv_str ) {
+	function get_dev_id( $recv_str ) {
 		$h = substr( $recv_str, 0, 2 );
 		if( $h!=='ID' && $h!=='ON' )
 			return '';
@@ -104,5 +102,15 @@
 			}
 		}
 	} 
+	
+	function decode_id_port( $str, &$id, &$port ) {
+		
+		$info = explode( "-", $str );
+		if( count($info)!=3 )
+			return;
+		
+		$id = $info[1];
+		$port = $info[2];
+	}
 	
 ?>

@@ -18,6 +18,11 @@
 	
 START:
 	$socket = start_udp_server( $port );
+	if( $socket===FALSE ) {
+		echo time()."\tsend udp port failed!\r\n";
+		return;	
+	}
+	echo "The udp server is running!\n";
 	
 	while( true ) {
 		
@@ -36,12 +41,12 @@ START:
 				socket_recvfrom( $socket, $buf, 1024*2, 0, $f_ip, $f_port );
 				if( strlen($buf)>1 ) {
 					
-					//echo time()."---$buf\r\n";
+					echo time()."---$buf\r\n";
 					
 					$h = substr( $buf, 0, 2 );
 					switch( $h ) {
 						case 'ID':
-							$id = get_id( $buf );
+							$id = get_dev_id( $buf );
 							if( empty($id) )
 								break;
 							
@@ -56,15 +61,20 @@ START:
 							
 						case 'UP':
 						case 'TP':
+							$recv_id = '';
+							$recv_port = 0;
+
+							decode_id_port( $buf, $recv_id, $recv_port );
+							echo "$recv_id      $recv_port\r\n";
+							if( $recv_id=='' || $recv_port<=0 )
+								break;
+							
+								
 							break;
 						
 						case 'ON':
-							
-							$v_ip = $f_ip;
-							$v_port = $f_port;
-							echo "viewer: ip - $v_ip       port - $v_port\r\n";
-/*							
-							$id = get_id( $buf );
+													
+							$id = get_dev_id( $buf );
 							if( empty($id) || !isset($dev_info_array[$id]) )
 								break;
 								
@@ -74,13 +84,17 @@ START:
 							if( empty($to_ip) || $to_port<=0 )
 								break;
 							
-							$msg = 'ON';
-							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
+//							$msg = 'ON';
+//							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
 							
 							$dev_info_array[$id]->v_ip = $f_ip;
 							$dev_info_array[$id]->v_port = $f_port;
-							$dev_info_array[$id]->if_open = 1;
-						
+							$dev_info_array[$id]->server_id = uniqid( $id );
+							
+							$com = "php reflector.php --v_ip $f_ip --v_port $f_port --id ".($dev_info_array[$id]->server_id)." >/dev/null &";
+							exec( $com );
+							echo "$com\r\n";
+/*							
 							$msg = 'OK';
 							$len = strlen( $msg );
 							socket_sendto( $socket, $msg, $len, 0, $f_ip, $f_port );
@@ -115,8 +129,8 @@ START:
 					
 				}
 		}
-//		echo "wwwwww\r\n";
-		clean_dev_info( 60*5 );
+		
+		clean_dev_info( 60*2 );
 //		var_dump( $dev_info_array );
 	}
 	

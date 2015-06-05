@@ -2,22 +2,25 @@
 
 	set_time_limit(0); 
 
-	$id = 'wdh-1';
+	$id = 'wdh_1';
 	
-	$address = 'www.cdsway.com';
-	//$address = '127.0.0.1';
+	//$address = 'www.cdsway.com';
+	$address = '127.0.0.1';
 	$port = 8090;
 	
 	$l_ip = '';
 	$l_port = '';
 	
 	$sock = init_socket();
-	say_ON( $sock, $address, $port );
+	for( $i=0;$i<20;$i++ ) {
+		say_ON( $sock, $address, $port );
+		sleep(15);
+	}
 	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
 	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 	socket_close( $sock );
 	
-	exec( "vlc --quiet -vvv rtp://@:$l_port" );
+	//exec( "vlc --quiet -vvv rtp://@:$l_port" );
 	
 	//$buf = '';
 	//socket_recvfrom( $sock, $buf, 1024, 0, $address, $port );
