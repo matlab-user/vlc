@@ -69,7 +69,13 @@ START:
 							if( $recv_id=='' || $recv_port<=0 )
 								break;
 							
-								
+							foreach( $dev_info_array as $v ) {
+								if( $v->server_id==$recv_id )
+									break;
+							}
+							$msg = strval( $recv_port );
+							socket_sendto( $socket, $msg, strlen($msg), 0, $v->ip, $v->port );
+							
 							break;
 						
 						case 'ON':
@@ -84,16 +90,18 @@ START:
 							if( empty($to_ip) || $to_port<=0 )
 								break;
 							
-//							$msg = 'ON';
-//							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
+							$msg = 'ON';
+							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
 							
-							$dev_info_array[$id]->v_ip = $f_ip;
-							$dev_info_array[$id]->v_port = $f_port;
-							$dev_info_array[$id]->server_id = uniqid( $id );
-							
-							$com = "php reflector.php --v_ip $f_ip --v_port $f_port --id ".($dev_info_array[$id]->server_id)." >/dev/null &";
-							exec( $com );
-							echo "$com\r\n";
+							if( $dev_info_array[$id]->server_id==''  ) {
+								$dev_info_array[$id]->v_ip = $f_ip;
+								$dev_info_array[$id]->v_port = $f_port;
+								$dev_info_array[$id]->server_id = uniqid( $id );
+								
+								$com = "php reflector.php --v_ip $f_ip --v_port $f_port --id ".($dev_info_array[$id]->server_id)." >/dev/null &";
+								exec( $com );
+								echo "$com\r\n";
+							}
 /*							
 							$msg = 'OK';
 							$len = strlen( $msg );

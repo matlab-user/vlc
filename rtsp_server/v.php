@@ -12,16 +12,21 @@
 	$l_port = '';
 	
 	$sock = init_socket();
+	say_ON( $sock, $address, $port );
+	
+	exec( "vlc --quiet -vvv rtp://@:$l_port >/dev/null &" );	
+	
+	echo "-------------------\r\n";
 	for( $i=0;$i<20;$i++ ) {
 		say_ON( $sock, $address, $port );
 		sleep(15);
 	}
-	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
-	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
+	echo "viewer quit, bye!";
 	socket_close( $sock );
 	
-	//exec( "vlc --quiet -vvv rtp://@:$l_port" );
-	
+
+	//	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
+	//	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 	//$buf = '';
 	//socket_recvfrom( $sock, $buf, 1024, 0, $address, $port );
 	//echo "======$buf\r\n";
