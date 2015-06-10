@@ -9,12 +9,13 @@
 	$port = 8090;
 	
 	$l_ip = '';
-	$l_port = '';
+	$l_port = 0;
 	
 	$sock = init_socket();
 	say_ON( $sock, $address, $port );
 	
-	exec( "vlc --quiet -vvv rtp://@:$l_port >/dev/null &" );	
+	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
+	exec( "vlc --quiet -vvv rtp://@:$l_port >/dev/null 2>&1 &" );	
 	
 	echo "-------------------\r\n";
 	for( $i=0;$i<20;$i++ ) {
@@ -25,7 +26,6 @@
 	socket_close( $sock );
 	
 
-	//	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
 	//	echo "l_ip--".$l_ip."    l_port--".$l_port."\n";
 	//$buf = '';
 	//socket_recvfrom( $sock, $buf, 1024, 0, $address, $port );

@@ -7,6 +7,7 @@
 		public $server_id = '';			// 开启的服务 ID
 		public $v_ip = '';			// viewer 的 ip 和 port		
 		public $v_port = 0;
+		public $reflector_port = 0;	// 转发器端口
 	}
 
 

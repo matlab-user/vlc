@@ -44,14 +44,14 @@
 		$w = NULL;
 		$e = NULL;
 		
-		$num = socket_select( $r, $w, $e, 20 );
+		$num = socket_select( $r, $w, $e, 6 );
 		if( $num===false || $num<=0 )
 			break;
 
 		if( $num>0 ) {
 			$len = socket_recvfrom( $socket, $buf, 1024*2, 0, $f_ip, $f_port );
-			if( $len>1 ) {
-	
+			if( $len>0 ) {
+				echo "---------------$len\r\n";
 				if( ord($buf)==128 )
 					socket_sendto( $socket, $buf, $len, 0, $v_ip, $v_port );				
 			}

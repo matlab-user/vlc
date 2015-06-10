@@ -60,7 +60,6 @@ START:
 							break;
 							
 						case 'UP':
-						case 'TP':
 							$recv_id = '';
 							$recv_port = 0;
 
@@ -69,12 +68,14 @@ START:
 							if( $recv_id=='' || $recv_port<=0 )
 								break;
 							
-							foreach( $dev_info_array as $v ) {
-								if( $v->server_id==$recv_id )
+							foreach( $dev_info_array as &$v ) {
+								if( $v->server_id==$recv_id ) {
+									$v->reflector_port = $recv_port;								
+									$msg = strval( $recv_port );
+									socket_sendto( $socket, $msg, strlen($msg), 0, $v->ip, $v->port );
 									break;
+								}
 							}
-							$msg = strval( $recv_port );
-							socket_sendto( $socket, $msg, strlen($msg), 0, $v->ip, $v->port );
 							
 							break;
 						
@@ -93,7 +94,7 @@ START:
 							$msg = 'ON';
 							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
 							
-							if( $dev_info_array[$id]->server_id==''  ) {
+							if( $dev_info_array[$id]->server_id=='' ) {
 								$dev_info_array[$id]->v_ip = $f_ip;
 								$dev_info_array[$id]->v_port = $f_port;
 								$dev_info_array[$id]->server_id = uniqid( $id );
@@ -102,44 +103,18 @@ START:
 								exec( $com );
 								echo "$com\r\n";
 							}
-/*							
-							$msg = 'OK';
-							$len = strlen( $msg );
-							socket_sendto( $socket, $msg, $len, 0, $f_ip, $f_port );
-*/
+
 							break;
 							
 						default:
-								
-//							echo ord($buf)."\r\n";
-//							echo "$f_ip --  $f_port \r\n";
-							if( ord($buf)==128 ) {	
-/*							
-								$v_ip = '';
-								$v_port = 0;
-								get_view_addr( $f_ip, $f_port, $v_ip, $v_port );
-								
-*/								
-
-								if( $v_ip=='' || $v_port<=0 )
-									break;
-								
-//								echo "$f_ip --  $f_port \r\n";
-								$len = strlen( $buf );
-								$str_array = str_split( $buf );
-//								echo "RTP------$len     ".dechex(ord($str_array[0]))."\r\n";
-
-								socket_sendto( $socket, $buf, $len, 0, $v_ip, $v_port );
-								
-							}
 							break;
 					}
 					
 				}
 		}
 		
-		clean_dev_info( 60*2 );
-//		var_dump( $dev_info_array );
+		clean_dev_info( 30 );
+		//var_dump( $dev_info_array );
 	}
 	
 	socket_close( $socket );
