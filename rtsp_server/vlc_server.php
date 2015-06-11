@@ -22,7 +22,7 @@ START:
 		echo time()."\tsend udp port failed!\r\n";
 		return;	
 	}
-	echo "The udp server is running!\n";
+	echo "The vlc_rtsp server is running!\n";
 	
 	while( true ) {
 		
@@ -58,41 +58,55 @@ START:
 							$dev_info_array[$id]->at= time();	
 						
 							break;
-							
-						case 'TP':				// 修改
+/*
+	class dev_info {
+		public $ip = '';			// 设备控制地址, 默认为 UDP  
+		public $port = 0;			// 设备控制端口
+		public $at = 0;				// 最后一次收到信息的时间，UTC时间
+		public $server_id = '';		// 开启的服务 ID	
+		public $rtsp_url = '';			// 反馈给 viewer 的 rtsp 地址
+		public $recver_port = '';	// 接收设备数据的UDP端口
+	}
+*/						case 'TP':
+						case 'UP':				// 修改
 							$recv_id = '';
-							$recv_port = 0;
+							$recv_port = '';
 
 							decode_id_port( $buf, $recv_id, $recv_port );
-							echo "$recv_id      $recv_port\r\n";
-							if( $recv_id=='' || $recv_port<=0 )
+							//echo "$recv_id      $recv_port\r\n";
+							if( $recv_id=='' || $recv_port=='' )
 								break;
 							
 							foreach( $dev_info_array as &$v ) {
 								if( $v->server_id==$recv_id ) {
-									$v->reflector_port = $recv_port;								
-									$msg = strval( $recv_port );
-									socket_sendto( $socket, $msg, strlen($msg), 0, $v->ip, $v->port );
+									if( $h=='UP' ) {
+										$v->recver_port = $recv_port;								
+										$msg = strval( $recv_port );
+										socket_sendto( $socket, $msg, strlen($msg), 0, $v->ip, intval($v->port) );
+									}
+									elseif( $h=='TP' )
+										$v->rtsp_url = $recv_port;
+									
 									break;
 								}
 							}
 							
 							break;
-						
+							
 						case 'ON':
 													
 							$id = get_dev_id( $buf );
 							if( empty($id) || !isset($dev_info_array[$id]) )
 								break;
 								
-							$to_ip = $dev_info_array[$id]->ip;
-							$to_port = $dev_info_array[$id]->port;
+							$dev_ip = $dev_info_array[$id]->ip;
+							$dev_port = $dev_info_array[$id]->port;
 							
-							if( empty($to_ip) || $to_port<=0 )
+							if( empty($dev_ip) || $dev_port<=0 )
 								break;
 							
 							$msg = 'ON';
-							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
+							socket_sendto( $socket, $msg, 2, 0, $dev_ip, $dev_port );
 							
 							if( $dev_info_array[$id]->server_id=='' ) {
 								$dev_info_array[$id]->server_id = uniqid( $id );

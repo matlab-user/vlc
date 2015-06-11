@@ -40,7 +40,7 @@
 		if( $t!==';' )
 			return '';
 		
-		$id = ltrim( $recv_str, 'ID;ON' );
+		$id = trim( $recv_str, 'ID;ON' );
 		
 		return $id;
 	} 

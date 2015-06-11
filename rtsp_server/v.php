@@ -15,7 +15,7 @@
 	say_ON( $sock, $address, $port );
 	
 	socket_getsockname( $sock, $l_ip, $l_port );		// 获取绑定的 ip、port
-	exec( "vlc --quiet -vvv rtp://@:$l_port >/dev/null 2>&1 &" );	
+//	exec( "vlc --quiet -vvv rtp://@:$l_port >/dev/null 2>&1 &" );	
 	
 	echo "-------------------\r\n";
 	for( $i=0;$i<20;$i++ ) {

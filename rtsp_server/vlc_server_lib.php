@@ -6,7 +6,7 @@
 		public $at = 0;				// 最后一次收到信息的时间，UTC时间
 		public $server_id = '';		// 开启的服务 ID	
 		public $rtsp_url = '';			// 反馈给 viewer 的 rtsp 地址
-		public $recver_port = 0;	// 接收设备数据的UDP端口
+		public $recver_port = '';	// 接收设备数据的UDP端口
 	}
 
 
@@ -39,7 +39,8 @@
 		if( $t!==';' )
 			return '';
 		
-		$id = ltrim( $recv_str, 'ID;ONQY' );
+		$id = ltrim( $recv_str, 'IDONQY' );
+		$id = rtrim( $id, ';' );
 		
 		return $id;
 	} 
@@ -110,5 +111,4 @@
 		$id = $info[1];
 		$port = $info[2];
 	}
-	
 ?>
