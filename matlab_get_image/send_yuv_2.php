@@ -12,7 +12,7 @@
 	
 	$socket = start_udp_server( $port );
 
-	$proc = proc_open( 'x264 -o - --input-res 176x144 - | vlc -vvv - --demux=h264', $descriptorspec, $pipes );
+	$proc = proc_open( 'x264 -o - --input-res 176x144 - | vlc -vvv - --demux=h264 &', $descriptorspec, $pipes );
 	if( is_resource($proc) ) {
 		
 		fclose( $pipes[1] );

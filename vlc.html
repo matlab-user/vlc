@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<meta charset='UTF-8' http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>wang dehui vlc test</title>
+		<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	</head>
+	
+	<body>
+		<embed type='application/x-vlc-plugin' pluginspage='http://www.videolan.org' width='50%' height='50%' id='vlc' loop='yes' autoplay='yes' target=''></embed>
+	</body>
+	
+	<script>
+		$( function() {
+			var vlc = document.vlc;
+			var play_id = vlc.playlist.add( 'rtsp://192.168.2.102:8090/t' );
+			vlc.playlist.playItem( play_id );	
+			//$('#vlc').attr( 'src', 'mp4-12C_高清.mp4' );
+		} );
+		//document.vlc.addTarget(targetURL, options, 4+8, -666);
+		
+		/*
+		target="akiyo_qcif.mp4"
+		<script language="Javascript">
+
+    var vlc=document.getElementById("vlc");
+    var id=vlc.playlist.add("rtsp://192.168.1.18:8554/crazystone.ts");
+    vlc.playlist.playItem(id);
+    var seek_time = 1000 * 50;
+    var volume_number = 10;
+
+   function volume_up()
+   {
+        alert("Before up is " + vlc.audio.volume);
+       if((vlc.audio.volume + volume_number) <= 200)
+        {
+            vlc.audio.volume += volume_number;    
+        }
+        else
+        {
+            vlc.audio.volume = 200;    
+        }
+        alert("After up is " + vlc.audio.volume);    
+   }
+   
+   function volume_down()
+   {
+        alert("Before down is " + vlc.audio.volume);        
+        if((vlc.audio.volume - volume_number)>= 0)
+        {
+            vlc.audio.volume -= volume_number;        
+        }
+        else
+        {
+            vlc.audio.volume = 0;
+        }
+        alert("After down is " + vlc.audio.volume);
+   }
+   
+   function onPause()
+   {
+        vlc.playlist.togglePause();
+   }
+   
+   function onStop()
+   {
+        vlc.playlist.stop();
+   }
+    
+    function onPlay()
+    {
+        vlc.input.rate = 1.0
+    } 
+		
+		*/
+	</script>
+</html>

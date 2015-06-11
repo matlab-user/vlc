@@ -59,7 +59,7 @@ START:
 						
 							break;
 							
-						case 'TP':				// 修改
+						case 'UP':
 							$recv_id = '';
 							$recv_port = 0;
 
@@ -95,20 +95,17 @@ START:
 							socket_sendto( $socket, $msg, 2, 0, $to_ip, $to_port );
 							
 							if( $dev_info_array[$id]->server_id=='' ) {
+								$dev_info_array[$id]->v_ip = $f_ip;
+								$dev_info_array[$id]->v_port = $f_port;
 								$dev_info_array[$id]->server_id = uniqid( $id );
 								
-								$com = "php recver.php --id ".($dev_info_array[$id]->server_id)." >/dev/null &";
+								$com = "php reflector.php --v_ip $f_ip --v_port $f_port --id ".($dev_info_array[$id]->server_id)." >/dev/null &";
 								exec( $com );
 								echo "$com\r\n";
 							}
 
 							break;
 							
-						case 'Qy':				// viewer 查询指定设备的 rtsp_url
-							
-						
-							break;
-						
 						default:
 							break;
 					}

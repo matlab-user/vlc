@@ -4,9 +4,10 @@
 		public $ip = '';			// 设备控制地址, 默认为 UDP  
 		public $port = 0;			// 设备控制端口
 		public $at = 0;				// 最后一次收到信息的时间，UTC时间
-		public $server_id = '';		// 开启的服务 ID	
-		public $rtsp_url = '';			// 反馈给 viewer 的 rtsp 地址
-		public $recver_port = 0;	// 接收设备数据的UDP端口
+		public $server_id = '';			// 开启的服务 ID
+		public $v_ip = '';			// viewer 的 ip 和 port		
+		public $v_port = 0;
+		public $reflector_port = 0;	// 转发器端口
 	}
 
 
@@ -32,14 +33,14 @@
 	
 	function get_dev_id( $recv_str ) {
 		$h = substr( $recv_str, 0, 2 );
-		if( $h!=='ID' && $h!=='ON' && $h!=='QY' )
+		if( $h!=='ID' && $h!=='ON' )
 			return '';
 		
 		$t = substr($recv_str, -1 );
 		if( $t!==';' )
 			return '';
 		
-		$id = ltrim( $recv_str, 'ID;ONQY' );
+		$id = ltrim( $recv_str, 'ID;ON' );
 		
 		return $id;
 	} 
@@ -54,7 +55,42 @@
 				unset( $dev_info_array[$k] );
 		}
 	}
+	
+	// 获取空闲的 udp 端口
+	// 需要以 root 权限运行
+	function get_valid_udp_port() {
+		$delim = ' ';
+		$out_res = array();
 		
+		for( $i=0; $i<10; $i++ ) {
+			$port = mt_rand( 1024, pow(2,16)-1 );
+			exec( "netstat -ua | grep $port", $out_res );
+			
+			if( count($out_res)==0 )
+				return $port;
+			
+			$sig = 0;
+			foreach( $out_res as $v ) {
+				strtok( $v, $delim );
+				strtok( $delim );
+				strtok( $delim );
+				$s1 = strtok( $delim );
+
+				$out_res_2 = array();
+				exec( "echo $s1 | grep -w $port", $out_res_2 );
+				if( count($out_res_2)!=0 ) {
+					$sig = 1;
+					break;
+				}
+			}
+			
+			if( $sig==0 )
+				return $port;
+		}
+		
+		return -1;
+	}
+	
 	function get_valid_tcp_port() {
 		$delim = ' ';
 		$out_res = array();
