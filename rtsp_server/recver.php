@@ -29,8 +29,8 @@
 	$l_port = 0;
 	
 	$rtsp_port = get_valid_tcp_port();
-//	$com = "vlc -vvv - --sout '#rtp{mux=ts,sdp=rtsp://$server_ip:$rtsp_port/wdh}' vlc://quit";
-$com = "vlc -vvv - vlc://quit";
+	$com = "cvlc -vvv - --sout '#rtp{mux=ts,sdp=rtsp://0.0.0.0:$rtsp_port/wdh}' vlc://quit";
+//$com = "vlc -vvv - vlc://quit";
 	$proc = proc_open( $com, $descriptorspec, $pipes );
 	if( is_resource($proc) ) {	
 		fclose( $pipes[1] );	
@@ -66,17 +66,15 @@ $com = "vlc -vvv - vlc://quit";
 		
 		if( $num>0 ) {
 			$len = socket_recvfrom( $socket, $buf, 1024*2, 0, $f_ip, $f_port );
-			if( $len>0 ) {	
-				if( ord($buf)==128 ) {
-					fwrite( $pipes[0], $buf, $len );
-					//socket_sendto( $socket, $buf, $len, 0, $v_ip, $v_port );	
-				}
+			if( $len>0 && ord($buf)==128 ) {
+				$header = substr( $buf, 0, 12 );		
+				$buf = substr( $buf, 12 );
+				fwrite( $pipes[0], $buf );
 			}
 		}
 	}
 	
 	socket_close( $socket );
-	
 //-------------------------------------------------------------------------------------	
 	function report_port( $header, $id, $port ) {
 		global $server_ip, $server_port;

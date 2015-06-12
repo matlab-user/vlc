@@ -111,4 +111,44 @@
 		$id = $info[1];
 		$port = $info[2];
 	}
+	
+	class rtp_header {
+		public $V = 0;			 
+		public $P = 0;
+		public $X = 0;
+		public $CC = 0;
+		public $M = 0;		
+		public $PT = 0;	
+		public $SN = 0;
+		public $TS = 0;
+		public $SSRC = 0;
+		public $CSRC = array();		
+	}
+	
+	// $header -- 类型是 字符串
+	function decode_rtp_header( $header, &$rtp_h ) {
+		$len = strlen( $header );
+		if( $len<12 )
+			return False;
+		
+		$c_1 = ord( substr($header,0,1) ); 
+		$rtp_h->V = ( $c_1 & 0xC0 ) >> 6;
+		$rtp_h->P = ( $c_1 & 0x20 ) >> 5;
+		$rtp_h->X = ( $c_1 & 0x10 ) >> 4;
+		$rtp_h->CC = $c_1 & 0x0F;
+		
+		$c_1 = ord( substr($header,1,1) ); 
+		$rtp_h->M = ( $c_1 & 0x80 ) >> 7;
+		$rtp_h->PT = ( $c_1 & 0x7F );
+		
+		$c_2 = substr( $header, 2, 2 ); 
+		$rtp_h->SN = ord($c_2[0])*pow(2,8) + ord($c_2[1]);
+		
+		$c_4 = substr( $header, 4, 4 );
+		$rtp_h->TS = ord($c_4[0])*pow(2,24) + ord($c_4[1])*pow(2,16) + ord($c_4[2])*pow(2,8) + ord($c_4[3]);
+		
+		$c_4 = substr( $header, 8, 4 );
+		$rtp_h->SSRC = ord($c_4[0])*pow(2,24) + ord($c_4[1])*pow(2,16) + ord($c_4[2])*pow(2,8) + ord($c_4[3]);
+	}
+	
 ?>

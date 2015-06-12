@@ -58,16 +58,8 @@ START:
 							$dev_info_array[$id]->at= time();	
 						
 							break;
-/*
-	class dev_info {
-		public $ip = '';			// 设备控制地址, 默认为 UDP  
-		public $port = 0;			// 设备控制端口
-		public $at = 0;				// 最后一次收到信息的时间，UTC时间
-		public $server_id = '';		// 开启的服务 ID	
-		public $rtsp_url = '';			// 反馈给 viewer 的 rtsp 地址
-		public $recver_port = '';	// 接收设备数据的UDP端口
-	}
-*/						case 'TP':
+						
+						case 'TP':
 						case 'UP':				// 修改
 							$recv_id = '';
 							$recv_port = '';

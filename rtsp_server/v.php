@@ -22,7 +22,7 @@
 		say_ON( $sock, $address, $port );
 		sleep(15);
 	}
-	echo "viewer quit, bye!";
+	echo "viewer quit, bye!\r\n";
 	socket_close( $sock );
 	
 
