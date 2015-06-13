@@ -81,6 +81,26 @@ instance-length = 1*DIGIT
 
 
 
-
-
 php send_yuv.php |x264 -o - --input-res 176x144 - | vlc -vvv - --demux=h264
+
+x264 -o - ../akiyo_qcif.y4m | vlc -vvv - --demux=h264 vlc://quit
+
+
+以下指令可以运行，但有质量问题
+发送端：
+x264 -o - ../ak**.y4m | socat - udp-sendto:127.0.0.1:8090
+接收端：
+vlc -vvv udp://@:8090 --demux=h264
+实验发现，接收端用rtp不行。
+
+通过vlc先转码为mp4，再rtp传输，此方案可行。
+
+
+
+如下方案也可行
+发送端
+cvlc -vvv ../akiyo_qcif.y4m --sout '#transcode{vcodec=mp4v,vb=200}:rtp{mux=ts,dst=127.0.0.1,port=8090}' vlc://quit
+
+
+发现，udp 播放MP4文件，效果仍然不错。
+

@@ -113,7 +113,7 @@
 	}
 	
 	class rtp_header {
-		public $V = 0;			 
+		public $V = 2;			 
 		public $P = 0;
 		public $X = 0;
 		public $CC = 0;
@@ -151,4 +151,62 @@
 		$rtp_h->SSRC = ord($c_4[0])*pow(2,24) + ord($c_4[1])*pow(2,16) + ord($c_4[2])*pow(2,8) + ord($c_4[3]);
 	}
 	
+	function encode_rtp_header( $rtp_h ) {
+		$h_str = '';
+		
+		$c_1 = (($rtp_h->V)<<6) + (($rtp_h->P)<<5) + (($rtp_h->X)<<4) + $rtp_h->CC;
+		$h_str .= chr($c_1);
+		
+		$c_1 = (($rtp_h->M)<<7) + ($rtp_h->PT);
+		$h_str .= chr($c_1);
+		
+		$c_1 = ($rtp_h->SN & 0xFF00) >> 8;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->SN & 0x00FF);
+		$h_str .= chr($c_1);
+		
+		$c_1 = ($rtp_h->TS & 0xFF000000) >> 24;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->TS & 0x00FF0000) >> 16;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->TS & 0x0000FF00) >> 8;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->TS & 0x000000FF);
+		$h_str .= chr($c_1);
+		
+		$c_1 = ($rtp_h->SSRC & 0xFF000000) >> 24;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->SSRC & 0x00FF0000) >> 16;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->SSRC & 0x0000FF00) >> 8;
+		$h_str .= chr($c_1);
+		$c_1 = ($rtp_h->SSRC & 0x000000FF);
+		$h_str .= chr($c_1);
+		
+		return $h_str;
+	}
+	
+	// $x264_out - 带有00 00 00 01 或 00 00 01 的一帧数据
+	// $rtp_h 中的 TS 如果 <=0, 则取当前时间戳
+	// 返回增加1的 $rtp->SN 值
+	function add_rtp_header( $x264_out, &$rtp_h ) {
+		if( $rtp_h->TS<=0 )
+			$rtp_h->TS = time();
+		
+		$ind = strpos( $x264_out, "\x00\x00\x00\x01" );
+		if( $ind==False ) {
+			$ind = strpos( $x264_out, "\x00\x00\x01" );
+			if( $ind==False )
+				return False;
+			else
+				$new_h264_out = substr( $x264_out, $ind+3 );
+		} 
+		else
+			$new_h264_out = substr( $x264_out, $ind+4 );
+		
+		$rtp_h_str = encode_rtp_header( $rtp_h );
+		$rtp_h->SN++;
+		
+		return $rtp_h_str.$new_h264_out;	
+	}
 ?>

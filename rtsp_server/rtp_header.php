@@ -22,6 +22,8 @@
 			echo "TS - $rtp_h->TS\r\n";
 			echo "SSRC - $rtp_h->SSRC\r\n";
 			echo "\r\n";
+			
+			$encode_h = encode_rtp_header( $rtp_h );
 		}
     }
 	
