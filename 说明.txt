@@ -90,7 +90,8 @@ x264 -o - ../akiyo_qcif.y4m | vlc -vvv - --demux=h264 vlc://quit
 发送端：
 x264 -o - ../ak**.y4m | socat - udp-sendto:127.0.0.1:8090
 接收端：
-vlc -vvv udp://@:8090 --demux=h264
+vlc -vvv udp://@:8090 --demux=h264 
+(使用 --demux=h264 参数，有些情况下会严重影响影片质量)
 实验发现，接收端用rtp不行。
 
 通过vlc先转码为mp4，再rtp传输，此方案可行。
@@ -104,3 +105,7 @@ cvlc -vvv ../akiyo_qcif.y4m --sout '#transcode{vcodec=mp4v,vb=200}:rtp{mux=ts,ds
 
 发现，udp 播放MP4文件，效果仍然不错。
 
+h264-sdp最基本格式
+m=video 9200 RTP/AVP 96
+a=rtpmap:96 H264/90000
+a=fmtp:96 packetization-mode=1;profile-level-id=42001E

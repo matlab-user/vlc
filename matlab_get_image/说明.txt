@@ -1,0 +1,3 @@
+SDP required:
+A description in SDP format is required to receive the RTP stream. 
+Note that rtp:// URIs cannot work with dynamic RTP payload format (7).
