@@ -187,12 +187,9 @@
 	}
 	
 	// $x264_out - 带有00 00 00 01 或 00 00 01 的一帧数据
-	// $rtp_h 中的 TS 如果 <=0, 则取当前时间戳
 	// 返回增加1的 $rtp->SN 值
 	function add_rtp_header( $x264_out, &$rtp_h ) {
-		if( $rtp_h->TS<=0 )
-			$rtp_h->TS = time();
-		
+			
 		$ind = strpos( $x264_out, "\x00\x00\x00\x01" );
 		if( $ind==False ) {
 			$ind = strpos( $x264_out, "\x00\x00\x01" );
