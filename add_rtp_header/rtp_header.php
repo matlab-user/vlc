@@ -2,6 +2,21 @@
 
 	require_once( 'rtp_lib.php' );
 	error_reporting( E_ALL ^ E_NOTICE );
+
+	while(1) {
+		$mid = fread( STDIN, 1024*21 );
+		echo "mid -- $mid\r\n";
+		$len = strlen( $mid );
+		if( $len<=0 )
+			break;
+		
+		echo $mid[$len-1]."----------len: $len\r\n";	
+
+		if( $mid[$len-1]==='h' ) {
+			echo "$len ------- ".$mid[$len-1]."\r\n";
+		}
+	}
+	return;
 	
 	$fid = fopen( 'rtp_header.txt', 'r' );
 	while( !feof($fid) ) {

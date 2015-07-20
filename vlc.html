@@ -12,8 +12,8 @@
 	<script>
 		$( function() {
 			var vlc = document.vlc;
-			var play_id = vlc.playlist.add( 'rtsp://192.168.2.102:8090/t' );
-			//var play_id = vlc.playlist.add( 'http://192.168.2.101/w.sdp' );
+			//var play_id = vlc.playlist.add( 'rtsp://192.168.2.102:8090/t' );
+			var play_id = vlc.playlist.add( 'http://192.168.2.101/w.sdp' );
 			vlc.playlist.playItem( play_id );	
 			//$('#vlc').attr( 'src', 'mp4-12C_高清.mp4' );
 		} );
